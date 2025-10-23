@@ -1,0 +1,42 @@
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# Django static and media files (untracked user uploads, etc.)
+static/
+media/
+
+# Virtual environment
+venv/
+.venv/
+ENV/
+.env/
+.envrc
+
+# SQLite database
+*.sqlite3
+
+# Logs
+*.log
+
+# IDE/project files
+.vscode/
+.idea/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Coverage and test output
+htmlcov/
+.coverage
+.cache/
+.tox/
+
+# Misc
+*.bak
+
+.hintrc

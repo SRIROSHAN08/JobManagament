@@ -1,121 +1,697 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Management</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Job Portal — Modern Design</title>
+
+    {% load static %}
     {% load django_bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --page-bg: #f6fbfd;
+            --white: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --accent-purple: #7c3aed;
+            --accent-purple-hover: #6d28d9;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 8px 30px rgba(17, 24, 39, 0.06);
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
         body {
+            height: 100%;
             margin: 0;
-            font-family: 'Inter', Arial, Helvetica, sans-serif;
-            background: #f7fafd;
+            padding: 0;
+            overflow-x: hidden
+        }
+
+        body {
+            background: var(--page-bg);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* header wrapper (keeps filter bar bg/ borders intact) */
+        .header-wrapper {
+            width: 100%;
+            background: var(--white)
+        }
+
+        /* --- NAV: reduce overall capsule width horizontally only (keeps height) --- */
+        .navbar-wrapper {
+            max-width: 980px;
+            /* tuned to match video proportion */
+            margin: 0px auto;
+            padding: 20px 42px;
         }
 
         .navbar-container {
-            max-width: 950px;
-            margin: 28px auto 0 auto;
-            background: #fff;
-            border-radius: 40px;
-            box-shadow: 0 8px 30px rgba(60, 72, 120, 0.15);
-            padding: 16px 38px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            background: var(--white);
+            /* unchanged per your request */
+            border: 1px solid var(--border-color);
+            /* unchanged */
+            border-radius: 50px;
+            /* unchanged */
+            padding: 14px 30px;
+            /* preserved vertical feel (not slimmer) */
+            box-shadow: var(--shadow-md);
         }
 
         .nav-logo {
-            height: 40px;
-            width: 40px;
-            margin-right: 18px;
-            object-fit: contain;
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            object-fit: cover;
         }
 
-        .nav-menu {
+        /* center area with larger spacing like the video */
+        .nav-center {
             display: flex;
             align-items: center;
-            gap: 34px;
+            justify-content: center;
             flex: 1;
         }
 
+        /* bigger gap to match the video reference */
+        .nav-menu {
+            display: flex;
+            gap: 48px;
+            /* larger horizontal spacing between items */
+            align-items: center;
+        }
+
+        /* base link style */
         .nav-menu a {
-            color: #222;
+            position: relative;
+            z-index: 1;
+            /* text above the hover pill */
+            display: inline-block;
+            padding: 10px 18px;
+            /* comfortable clickable area */
+            border-radius: 14px;
             text-decoration: none;
-            font-size: 16px;
-            font-weight: 500;
-            transition: color 0.2s;
-            letter-spacing: 0.01em;
-            padding: 4px 0;
-        }
-
-        .nav-menu a:hover {
-            color: #7c3aed;
-        }
-
-        .btn-create-job {
-            background: linear-gradient(90deg, #7c3aed 0%, #a06cf8 100%);
-            color: #fff;
-            border: none;
-            border-radius: 22px;
-            padding: 9px 26px;
+            color: var(--text);
             font-weight: 600;
-            font-size: 16px;
-            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.18);
+            /* slightly bolder to match reference */
+            font-size: 15px;
+            transition: color 200ms ease;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Color on hover (text only) - NO translate on text (avoids flicker) */
+        .nav-menu a:hover {
+            color: var(--accent-purple);
+        }
+
+        /* Hover pill implemented behind the text using ::before with z-index:-1.
+       The pill slides up into place when hovering; text remains visible always. */
+        .nav-menu a::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            /* slightly larger than text for a generous capsule */
+            width: calc(100% + 48px);
+            height: calc(100% + 20px);
+            transform: translate(-50%, 12px);
+            /* start slightly below, slide up */
+            border-radius: 16px;
+            background: var(--white);
+            /* same white — preserves look */
+            box-shadow: 0 18px 40px rgba(17, 24, 39, 0.06);
+            /* soft voluminous shadow like video */
+            opacity: 0;
+            transition: transform 320ms cubic-bezier(.2, .9, .2, 1), opacity 260ms ease;
+            pointer-events: none;
+            z-index: -1;
+            /* ensures text never covered */
+        }
+
+        .nav-menu a:hover::before {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+            /* center behind text */
+        }
+
+        /* active link stays highlighted */
+        .nav-menu a::before {
+            box-shadow: 0 14px 36px rgba(17, 24, 39, 0.06);
+        }
+
+        /* --- Patch to match your reference image --- */
+        /* 1) Give more horizontal room to avoid wrapping (nudge capsule width) */
+        .navbar-wrapper {
+            max-width: 1100px !important;
+            /* increase so items don't wrap — tune ±10px if needed */
+        }
+
+        /* 2) Prevent nav links from wrapping into two lines */
+        .nav-menu a {
+            white-space: nowrap;
+            /* keep multi-word labels on one line */
+            padding: 10px 12px;
+            /* slightly tighter horizontal padding */
+            font-weight: 600;
+            /* keep boldness like reference */
+            font-size: 15px;
+        }
+
+        /* 3) Reduce hover-pill size so it doesn't overlap the logo and looks like reference */
+        .nav-menu a::before {
+            width: calc(100% + 28px) !important;
+            /* smaller horizontal expansion */
+            height: calc(100% + 12px) !important;
+            /* slightly slimmer vertical size */
+            border-radius: 14px !important;
+            transform: translate(-50%, 8px);
+            /* start slightly below, will slide up on hover */
+            box-shadow: 0 12px 28px rgba(17, 24, 39, 0.055);
+            /* softer, shallower shadow */
+        }
+
+        /* 4) Ensure pill sits behind text (already used but be explicit) */
+        .nav-menu a {
+            z-index: 0;
+        }
+
+        .nav-menu a::before {
+            z-index: -1;
+        }
+
+        /* 5) Reduce Create button min-width so it gives center more room */
+        .create-btn {
+            min-width: 140px !important;
+            /* was wider — reduced to free space */
+            padding: 12px 28px !important;
+            /* keep it prominent but not space-hogging */
+        }
+
+        /* 6) Tweak spacing between logo and first item so pill doesn't touch logo */
+        .nav-logo-section {
+            margin-right: 10px !important;
+        }
+
+        /* 7) If you still see overlap on the first item, add a tiny left margin on the nav center */
+        .nav-center {
+            padding-left: 6px;
+        }
+
+        /* 8) Slight vertical centering adjustment (if some items still look off) */
+        .navbar-container .nav-menu,
+        .navbar-container .nav-actions {
+            align-items: center;
+        }
+
+        /* OPTIONAL: if you want the pill shadow to match exactly, tweak opacity */
+        .nav-menu a::before {
+            box-shadow: 0 14px 36px rgba(17, 24, 39, 0.06);
+        }
+
+
+        /* NAV ACTIONS: larger, clearer Create Jobs button per your request */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .create-btn {
+            position: relative;
+            overflow: hidden;
+            background: var(--accent-purple);
+            /* unchanged color */
+            color: var(--white);
+            border: none;
+            padding: 14px 34px;
+            /* bigger, more prominent */
+            border-radius: 28px;
+            font-weight: 700;
+            font-size: 15px;
             cursor: pointer;
-            transition: background 0.2s, box-shadow 0.2s;
+            transition: background 220ms ease, box-shadow 220ms ease, transform 200ms ease;
+            box-shadow: 0 10px 28px rgba(124, 58, 237, 0.18);
+            /* stronger shadow to match video pop */
+            min-width: 160px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* labels layered and swapped by opacity only (safe, no flicker) */
+        .create-btn .label {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--white);
+            white-space: nowrap;
+            line-height: 1;
+            pointer-events: none;
+            transition: opacity 220ms ease, transform 260ms cubic-bezier(.2, .9, .2, 1);
+            z-index: 2;
+        }
+
+        .create-btn .label.primary {
+            opacity: 1;
+            transform: translate(-50%, -50%)
+        }
+
+        .create-btn .label.alt {
+            opacity: 0;
+            transform: translate(-50%, -30%)
+        }
+
+        .create-btn:hover {
+            background: var(--accent-purple-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 14px 36px rgba(124, 58, 237, 0.2);
+        }
+
+        .create-btn:hover .label.primary {
+            opacity: 0;
+            transform: translate(-50%, -68%);
+        }
+
+        .create-btn:hover .label.alt {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        }
+
+        /* dropdown (unchanged visuals) */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            min-width: 140px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 260ms ease;
+            z-index: 1000;
+        }
+
+        .nav-actions:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0)
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 12px 20px;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500
+        }
+
+        /* ---------- Filter bar left exactly as you provided (no visual changes) ---------- */
+        .filter-bar-outer {
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            background: var(--white);
+            padding: 18px 0
+        }
+
+        .filter-bar-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px
+        }
+
+        .filter-section {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0
+        }
+
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 0;
+            width: 100%;
+            flex-wrap: nowrap
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 0 0 auto;
+            background: transparent;
+            border: none;
+            border-right: 1px solid var(--border-color);
+            padding: 0 24px;
+            height: 40px;
+            transition: all 0.18s ease
+        }
+
+        .filter-item:first-child {
+            padding-left: 0
+        }
+
+        .filter-item svg {
+            width: 18px;
+            height: 18px;
+            color: var(--text-light);
+            flex-shrink: 0
+        }
+
+        .filter-item input[type="text"] {
+            border: none;
             outline: none;
+            background: transparent;
+            color: var(--text);
+            font-size: 14px;
+            width: 200px
         }
 
-        .btn-create-job:hover {
-            background: linear-gradient(90deg, #a06cf8 0%, #7c3aed 100%);
-            box-shadow: 0 4px 16px rgba(124, 58, 237, 0.22);
+        .filter-item select {
+            border: none;
+            outline: none;
+            background: transparent;
+            color: var(--text-light);
+            font-size: 14px;
+            min-width: 150px;
+            padding-right: 18px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right center
         }
 
-        @media (max-width: 700px) {
-            .navbar-container {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 14px 16px;
+        .salary-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 24px;
+            border-right: 1px solid var(--border-color);
+            height: 40px;
+            margin-left: auto
+        }
+
+        .salary-label {
+            font-size: 14px;
+            color: var(--text);
+            font-weight: 500
+        }
+
+        .salary-value-display {
+            font-weight: 600;
+            color: var(--text);
+            min-width: 110px
+        }
+
+        input[type="range"].salary-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 160px;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 4px
+        }
+
+        input[type="range"].salary-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--white);
+            border: 3px solid var(--accent-purple);
+            border-radius: 50%
+        }
+
+        .clear-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 14px;
+            padding: 0 24px;
+            height: 40px
+        }
+
+        /* Responsive tuning (keeps enlarged button usable) */
+        @media (max-width:900px) {
+            .navbar-wrapper {
+                padding: 12px 18px;
+                max-width: 760px
             }
 
             .nav-menu {
-                flex-direction: column;
-                gap: 18px;
-                width: 100%;
-                margin: 14px 0;
+                gap: 32px
             }
 
-            .btn-create-job {
-                width: 100%;
-                font-size: 17px;
+            .create-btn {
+                min-width: 140px;
+                padding: 12px 28px
+            }
+        }
+
+        @media (max-width:650px) {
+            .navbar-wrapper {
+                padding: 10px 14px;
+                max-width: 100%
+            }
+
+            .navbar-container {
+                border-radius: 20px;
+                padding: 10px 16px
+            }
+
+            .nav-menu {
+                gap: 18px;
+                font-size: 13px
+            }
+
+            .create-btn {
+                padding: 10px 22px;
+                min-width: 120px;
+                font-size: 14px
+            }
+
+            .filter-bar-container {
+                padding: 0 16px
+            }
+
+            .filter-item input[type="text"] {
+                width: 100%
+            }
+
+            .filter-item {
+                flex: 1 1 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 10px 12px
             }
         }
     </style>
 </head>
 
 <body>
-    <nav class="navbar-container">
-        <img class="nav-logo" src="https://cdn-icons-png.flaticon.com/512/4712/4712107.png" alt="Logo">
-        <div class="nav-menu">
-            <a href="#">Home</a>
-            <a href="#">Find Jobs</a>
-            <a href="#">Find Talents</a>
-            <a href="#">About us</a>
-            <a href="#">Testimonials</a>
+    <div class="header-wrapper">
+        <div class="navbar-wrapper">
+            <div class="navbar-container">
+                <div class="nav-logo-section">
+                    <img src="{% static 'assets/images/cmwlogo.svg' %}" alt="Logo" class="nav-logo">
+                </div>
+
+                <div class="nav-center">
+                    <nav class="nav-menu" role="navigation" aria-label="Primary">
+                        <a href="#" class="active">Home</a>
+                        <a href="#">Find Jobs</a>
+                        <a href="#">Find Talents</a>
+                        <a href="#">About us</a>
+                        <a href="#">Testimonials</a>
+                    </nav>
+                </div>
+
+                <div class="nav-actions">
+                    <button id="openModalBtn" class="create-btn" type="button" aria-label="Create Jobs / Login">
+                        <span class="label primary">Create Jobs</span>
+                        <span class="label alt">Login</span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="#">Login</a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button id="openModalBtn" class="btn-create-job">Create Jobs</button>
+
+        <div class="filter-bar-outer">
+            <div class="filter-bar-container">
+                <div class="filter-section">
+                    <form class="filter-bar" method="GET" id="filterForm">
+                        <div class="filter-item">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <input type="text" name="search" placeholder="Search By Job Title, Role"
+                                value="{{ request.GET.search|default:'' }}" id="searchInput">
+                        </div>
+
+                        <div class="filter-item" style="margin-left:30px">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M12 21s-7-6.5-7-11A7 7 0 0 1 19 10c0 4.5-7 11-7 11Z" />
+                                <circle cx="12" cy="10" r="3" />
+                            </svg>
+                            <select name="location" title="location">
+                                <option value="">Preferred Location</option>
+                                <option value="Chennai">Chennai</option>
+                                <option value="Bangalore">Bangalore</option>
+                                <option value="Remote">Remote</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-item" style="margin-left:60px">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                            </svg>
+                            <select name="job_type" title="job_type">
+                                <option value="">Job type</option>
+                                <option value="full time">Full time</option>
+                                <option value="part time">Part time</option>
+                                <option value="contract">Contract</option>
+                                <option value="internship">Internship</option>
+                            </select>
+                        </div>
+
+                        <div class="salary-section">
+                            <span class="salary-label">Salary</span>
+                            <div class="salary-slider-wrapper">
+                                <span class="salary-value-display" id="salaryValue">₹50k - ₹80k</span>
+                                <input class="salary-slider" type="range" name="salary" min="50000" max="1000000"
+                                    step="10000" value="{{ request.GET.salary|default:1000000 }}"
+                                    data-default="{{ request.GET.salary|default:1000000 }}" id="salaryRange"
+                                    title="salary">
 
 
-    </nav>
-    {% block content %}
-    {% endblock %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+                            </div>
+                        </div>
+
+                        <button type="button" class="clear-btn" onclick="clearFilters()">Clear All</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main style="padding:40px 0;">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <script>
+        (function () {
+            if (window.__centralUIInit) return;
+            window.__centralUIInit = true;
+
+            function $(sel, ctx) { return (ctx || document).querySelector(sel); }
+            function safeParseInt(v, fallback = 0) {
+                const n = parseInt(v, 10);
+                return Number.isFinite(n) ? n : fallback;
+            }
+
+            const slider = $('#salaryRange');
+            const valueDisplay = $('#salaryValue');
+            const form = $('#filterForm');
+
+            // Format salary number to ₹50k / ₹2L style
+            function formatSalary(v) {
+                v = safeParseInt(v, 0);
+                if (v >= 100000) return '₹' + (v / 100000).toFixed(0) + 'L';
+                return '₹' + Math.round(v / 1000) + 'k';
+            }
+
+            // Update slider visuals + label
+            function updateSliderVisual(sliderEl) {
+                if (!sliderEl || !valueDisplay) return;
+                const min = safeParseInt(sliderEl.min, 0);
+                const max = safeParseInt(sliderEl.max, 1000000);
+                const cur = safeParseInt(sliderEl.value, max);
+                const pct = ((cur - min) / (max - min)) * 100;
+                sliderEl.style.background = `linear-gradient(to right, var(--accent-purple) 0%, var(--accent-purple) ${pct}%, #e5e7eb ${pct}%, #e5e7eb 100%)`;
+                valueDisplay.textContent = formatSalary(min) + ' - ' + formatSalary(cur);
+            }
+
+            // Initialize
+            if (slider && valueDisplay) {
+                slider.addEventListener('input', () => updateSliderVisual(slider));
+                updateSliderVisual(slider);
+            }
+
+            // --- CLEAR FILTERS FUNCTION ---
+            window.clearFilters = function () {
+                if (!form) return;
+
+                // Clear text inputs
+                form.querySelectorAll('input[type="text"]').forEach(i => i.value = '');
+
+                // Reset selects
+                form.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+
+                // Reset range inputs
+                form.querySelectorAll('input[type="range"]').forEach(r => {
+                    // Always reset to max value (show all jobs)
+                    const max = safeParseInt(r.max, 1000000);
+                    r.value = max;
+                    updateSliderVisual(r);
+                });
+
+                // Submit the form so all jobs appear
+                form.submit();
+            };
+
+            // Auto-submit on any filter change
+            document.querySelectorAll('#filterForm select, #filterForm input').forEach(el => {
+                el.addEventListener('change', () => {
+                    document.getElementById('filterForm').submit();
+                });
+            });
+
+            // Modal logic (safe guard)
+            const openModalBtn = $('#openModalBtn');
+            const closeModalBtn = $('#closeModalBtn');
+            const jobModalOverlay = $('#jobModalOverlay');
+
+            if (openModalBtn && jobModalOverlay) {
+                openModalBtn.addEventListener('click', () => jobModalOverlay.style.display = 'block');
+            }
+            if (closeModalBtn && jobModalOverlay) {
+                closeModalBtn.addEventListener('click', () => jobModalOverlay.style.display = 'none');
+            }
+        })();
+    </script>
+
 </body>
 
 </html>

@@ -10,44 +10,36 @@ class JobView(View):
     def get(self, request):
         queryset = JobDetails.objects.all()
 
-        
         search = request.GET.get("search", "").strip()
         location = request.GET.get("location", "").strip()
         job_type = request.GET.get("job_type", "").strip()
         salary = request.GET.get("salary", "").strip()
 
-       
-        if search and JobDetails.objects.filter(company_name__iexact=search).exists():
-            queryset = queryset.filter(company_name__iexact=search)
+        filters = Q()
 
-        
-        elif location and JobDetails.objects.filter(location__iexact=location).exists():
-            queryset = queryset.filter(location__iexact=location)
+        # Search by title or company name
+        if search:
+            filters &= Q(title__icontains=search) | Q(company_name__icontains=search)
 
-        
-        else:
-            q_list = []
+        # Exact match location
+        if location:
+            filters &= Q(location__iexact=location)
 
-            if search:
-                q_list.append(Q(title__icontains=search) | Q(company_name__icontains=search))
-            if location:
-                q_list.append(Q(location__iexact=location))  
-            if job_type:
-                q_list.append(Q(job_type__iexact=job_type))  
-            if salary:
-                try:
-                    q_list.append(Q(salary_range__gte=int(salary)))
-                except ValueError:
-                    pass  
+        # Job type filter
+        if job_type:
+            filters &= Q(job_type__iexact=job_type)
 
-            
-            if q_list:
-                queryset = queryset.filter(reduce(lambda x, y: x & y, q_list))
-            elif not any([search, location, job_type, salary]):
-                queryset = JobDetails.objects.all()
-            
-        print(salary)
-        
+        # Salary filter (show jobs with salary >= selected)
+        if salary:
+            try:
+                filters &= Q(salary_range__gte=int(salary))
+            except ValueError:
+                pass
+
+        # Apply all filters if any
+        if filters:
+            queryset = queryset.filter(filters)
+
         form = JobDetails_Form()
         context = {
             'all_jobs': queryset,
@@ -67,4 +59,4 @@ class JobView(View):
             'all_jobs':all_jobs , 'form':form,
         }
         
-        return render(request,'home.html',context)
+        return render(request,'job/home.html',context)

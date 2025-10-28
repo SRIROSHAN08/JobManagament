@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Job Portal — Modern Design</title>
+    <title>Job Management</title>
 
     {% load static %}
     {% load django_bootstrap5 %}
@@ -46,16 +46,15 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* header wrapper (keeps filter bar bg/ borders intact) */
         .header-wrapper {
             width: 100%;
             background: var(--white)
         }
 
-        /* --- NAV: reduce overall capsule width horizontally only (keeps height) --- */
+
         .navbar-wrapper {
             max-width: 980px;
-            /* tuned to match video proportion */
+
             margin: 0px auto;
             padding: 20px 42px;
         }
@@ -65,13 +64,13 @@
             align-items: center;
             justify-content: space-between;
             background: var(--white);
-            /* unchanged per your request */
+
             border: 1px solid var(--border-color);
-            /* unchanged */
+
             border-radius: 50px;
-            /* unchanged */
+
             padding: 14px 30px;
-            /* preserved vertical feel (not slimmer) */
+
             box-shadow: var(--shadow-md);
         }
 
@@ -82,7 +81,7 @@
             object-fit: cover;
         }
 
-        /* center area with larger spacing like the video */
+
         .nav-center {
             display: flex;
             align-items: center;
@@ -90,104 +89,102 @@
             flex: 1;
         }
 
-        /* bigger gap to match the video reference */
+
         .nav-menu {
             display: flex;
             gap: 48px;
-            /* larger horizontal spacing between items */
+
             align-items: center;
         }
 
-        /* base link style */
+
         .nav-menu a {
             position: relative;
             z-index: 1;
-            /* text above the hover pill */
+
             display: inline-block;
             padding: 10px 18px;
-            /* comfortable clickable area */
+
             border-radius: 14px;
             text-decoration: none;
             color: var(--text);
             font-weight: 600;
-            /* slightly bolder to match reference */
+
             font-size: 15px;
             transition: color 200ms ease;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Color on hover (text only) - NO translate on text (avoids flicker) */
+
         .nav-menu a:hover {
             color: var(--accent-purple);
         }
 
-        /* Hover pill implemented behind the text using ::before with z-index:-1.
-       The pill slides up into place when hovering; text remains visible always. */
+
         .nav-menu a::before {
             content: "";
             position: absolute;
             left: 50%;
             top: 50%;
-            /* slightly larger than text for a generous capsule */
+
             width: calc(100% + 48px);
             height: calc(100% + 20px);
             transform: translate(-50%, 12px);
-            /* start slightly below, slide up */
+
             border-radius: 16px;
             background: var(--white);
-            /* same white — preserves look */
+
             box-shadow: 0 18px 40px rgba(17, 24, 39, 0.06);
-            /* soft voluminous shadow like video */
+
             opacity: 0;
             transition: transform 320ms cubic-bezier(.2, .9, .2, 1), opacity 260ms ease;
             pointer-events: none;
             z-index: -1;
-            /* ensures text never covered */
+
         }
 
         .nav-menu a:hover::before {
             opacity: 1;
             transform: translate(-50%, -50%);
-            /* center behind text */
+
         }
 
-        /* active link stays highlighted */
+
         .nav-menu a::before {
             box-shadow: 0 14px 36px rgba(17, 24, 39, 0.06);
         }
 
-        /* --- Patch to match your reference image --- */
-        /* 1) Give more horizontal room to avoid wrapping (nudge capsule width) */
+
         .navbar-wrapper {
             max-width: 1100px !important;
-            /* increase so items don't wrap — tune ±10px if needed */
+
         }
 
-        /* 2) Prevent nav links from wrapping into two lines */
+
         .nav-menu a {
             white-space: nowrap;
-            /* keep multi-word labels on one line */
+
             padding: 10px 12px;
-            /* slightly tighter horizontal padding */
+
             font-weight: 600;
-            /* keep boldness like reference */
+
             font-size: 15px;
         }
 
-        /* 3) Reduce hover-pill size so it doesn't overlap the logo and looks like reference */
+
         .nav-menu a::before {
             width: calc(100% + 28px) !important;
-            /* smaller horizontal expansion */
+
             height: calc(100% + 12px) !important;
-            /* slightly slimmer vertical size */
+
             border-radius: 14px !important;
             transform: translate(-50%, 8px);
-            /* start slightly below, will slide up on hover */
+
             box-shadow: 0 12px 28px rgba(17, 24, 39, 0.055);
-            /* softer, shallower shadow */
+
         }
 
-        /* 4) Ensure pill sits behind text (already used but be explicit) */
+
         .nav-menu a {
             z-index: 0;
         }
@@ -196,37 +193,37 @@
             z-index: -1;
         }
 
-        /* 5) Reduce Create button min-width so it gives center more room */
+
         .create-btn {
             min-width: 140px !important;
-            /* was wider — reduced to free space */
+
             padding: 12px 28px !important;
-            /* keep it prominent but not space-hogging */
+
         }
 
-        /* 6) Tweak spacing between logo and first item so pill doesn't touch logo */
+
         .nav-logo-section {
             margin-right: 10px !important;
         }
 
-        /* 7) If you still see overlap on the first item, add a tiny left margin on the nav center */
+
         .nav-center {
             padding-left: 6px;
         }
 
-        /* 8) Slight vertical centering adjustment (if some items still look off) */
+
         .navbar-container .nav-menu,
         .navbar-container .nav-actions {
             align-items: center;
         }
 
-        /* OPTIONAL: if you want the pill shadow to match exactly, tweak opacity */
+
         .nav-menu a::before {
             box-shadow: 0 14px 36px rgba(17, 24, 39, 0.06);
         }
 
 
-        /* NAV ACTIONS: larger, clearer Create Jobs button per your request */
+
         .nav-actions {
             display: flex;
             align-items: center;
@@ -239,25 +236,25 @@
             position: relative;
             overflow: hidden;
             background: var(--accent-purple);
-            /* unchanged color */
+
             color: var(--white);
             border: none;
             padding: 14px 34px;
-            /* bigger, more prominent */
+
             border-radius: 28px;
             font-weight: 700;
             font-size: 15px;
             cursor: pointer;
             transition: background 220ms ease, box-shadow 220ms ease, transform 200ms ease;
             box-shadow: 0 10px 28px rgba(124, 58, 237, 0.18);
-            /* stronger shadow to match video pop */
+
             min-width: 160px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* labels layered and swapped by opacity only (safe, no flicker) */
+
         .create-btn .label {
             position: absolute;
             left: 50%;
@@ -297,7 +294,7 @@
             transform: translate(-50%, -50%);
         }
 
-        /* dropdown (unchanged visuals) */
+
         .dropdown-menu {
             position: absolute;
             top: calc(100% + 8px);
@@ -328,7 +325,7 @@
             font-weight: 500
         }
 
-        /* ---------- Filter bar left exactly as you provided (no visual changes) ---------- */
+
         .filter-bar-outer {
             width: 100vw;
             position: relative;
@@ -458,7 +455,7 @@
             height: 40px
         }
 
-        /* Responsive tuning (keeps enlarged button usable) */
+
         @media (max-width:900px) {
             .navbar-wrapper {
                 padding: 12px 18px;
@@ -625,14 +622,14 @@
             const valueDisplay = $('#salaryValue');
             const form = $('#filterForm');
 
-            // Format salary number to ₹50k / ₹2L style
+
             function formatSalary(v) {
                 v = safeParseInt(v, 0);
                 if (v >= 100000) return '₹' + (v / 100000).toFixed(0) + 'L';
                 return '₹' + Math.round(v / 1000) + 'k';
             }
 
-            // Update slider visuals + label
+
             function updateSliderVisual(sliderEl) {
                 if (!sliderEl || !valueDisplay) return;
                 const min = safeParseInt(sliderEl.min, 0);
@@ -643,42 +640,41 @@
                 valueDisplay.textContent = formatSalary(min) + ' - ' + formatSalary(cur);
             }
 
-            // Initialize
+
             if (slider && valueDisplay) {
                 slider.addEventListener('input', () => updateSliderVisual(slider));
                 updateSliderVisual(slider);
             }
 
-            // --- CLEAR FILTERS FUNCTION ---
+
             window.clearFilters = function () {
                 if (!form) return;
 
-                // Clear text inputs
+
                 form.querySelectorAll('input[type="text"]').forEach(i => i.value = '');
 
-                // Reset selects
+
                 form.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
 
-                // Reset range inputs
+
                 form.querySelectorAll('input[type="range"]').forEach(r => {
-                    // Always reset to max value (show all jobs)
+
                     const max = safeParseInt(r.max, 1000000);
                     r.value = max;
                     updateSliderVisual(r);
                 });
 
-                // Submit the form so all jobs appear
+
                 form.submit();
             };
 
-            // Auto-submit on any filter change
             document.querySelectorAll('#filterForm select, #filterForm input').forEach(el => {
                 el.addEventListener('change', () => {
                     document.getElementById('filterForm').submit();
                 });
             });
 
-            // Modal logic (safe guard)
+
             const openModalBtn = $('#openModalBtn');
             const closeModalBtn = $('#closeModalBtn');
             const jobModalOverlay = $('#jobModalOverlay');

@@ -17,26 +17,25 @@ class JobView(View):
 
         filters = Q()
 
-        # Search by title or company name
         if search:
             filters &= Q(title__icontains=search) | Q(company_name__icontains=search)
 
-        # Exact match location
+     
         if location:
             filters &= Q(location__iexact=location)
 
-        # Job type filter
+  
         if job_type:
             filters &= Q(job_type__iexact=job_type)
 
-        # Salary filter (show jobs with salary >= selected)
+        
         if salary:
             try:
                 filters &= Q(salary_range__gte=int(salary))
             except ValueError:
                 pass
 
-        # Apply all filters if any
+     
         if filters:
             queryset = queryset.filter(filters)
 

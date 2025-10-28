@@ -4,10 +4,6 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Django static and media files (untracked user uploads, etc.)
-static/
-media/
-
 # Virtual environment
 venv/
 .venv/
